@@ -247,6 +247,7 @@
     <string name="stories_moderation">Stories</string>
     <string name="label_moderation">Moderation</string>
     <string name="title_moderation">%1$s moderation</string>
+    <string name="label_delete">Delete</string>
     <string name="label_denounce">Denounce</string>
     <string name="button_title_disapprove">Reject</string>
     <string name="button_title_publish">Publish</string>

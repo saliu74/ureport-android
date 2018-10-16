@@ -361,9 +361,15 @@ public class StoryViewFragment extends ProgressFragment
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(UserManager.canModerate()
-                ? R.menu.menu_reject_story
-                : R.menu.menu_denounce_story, menu);
+        final int menuRes;
+        if (UserManager.canModerate()) {
+            menuRes = R.menu.menu_reject_story;
+        } else if (story.getUser().equals(UserManager.getUserId())) {
+            menuRes = R.menu.menu_delete_story;
+        } else {
+            menuRes = R.menu.menu_denounce_story;
+        }
+        inflater.inflate(menuRes, menu);
 
         if (shareActionButton == null) {
             MenuItem menuItem = menu.add(Menu.NONE, R.id.share, Menu.NONE, R.string.title_share);
@@ -377,6 +383,9 @@ public class StoryViewFragment extends ProgressFragment
         switch (item.getItemId()) {
             case R.id.disapproveStory:
                 disapproveStory();
+                break;
+            case R.id.deleteStory:
+                deleteStory();
                 break;
             case R.id.denounceStory:
                 denounceStory();
@@ -397,6 +406,17 @@ public class StoryViewFragment extends ProgressFragment
                 } else {
                     displayToast(R.string.error_remove);
                 }
+            }
+        });
+    }
+
+    private void deleteStory() {
+        storyServices.removeStory(story, (firebaseError, firebase) -> {
+            if (firebaseError == null) {
+                displayToast(R.string.message_success_remove);
+                getActivity().finish();
+            } else {
+                displayToast(R.string.error_remove);
             }
         });
     }
