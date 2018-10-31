@@ -59,10 +59,15 @@ public class StoryServices extends ProgramServices {
         getDefaultRoot().child(storyPath).child(story.getKey()).setValue(story, listener);
     }
 
-    public void removeStory(Story story, Firebase.CompletionListener listener) {
+    public void removeStoryByModerator(Story story, Firebase.CompletionListener listener) {
         cleanStory(story);
         getDefaultRoot().child(storyPath).child(story.getKey()).removeValue();
         getDefaultRoot().child(storyDisapprovedPath).child(story.getKey()).setValue(story, listener);
+    }
+
+    public void removeStory(Story story, Firebase.CompletionListener listener) {
+        cleanStory(story);
+        getDefaultRoot().child(storyPath).child(story.getKey()).removeValue(listener);
     }
 
     public void disapprovedStory(Story story, Firebase.CompletionListener listener) {

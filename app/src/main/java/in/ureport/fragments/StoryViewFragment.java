@@ -397,7 +397,7 @@ public class StoryViewFragment extends ProgressFragment
     }
 
     private void disapproveStory() {
-        storyServices.removeStory(story, new Firebase.CompletionListener() {
+        storyServices.removeStoryByModerator(story, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError == null) {
