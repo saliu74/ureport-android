@@ -222,6 +222,9 @@
     <string name="title_preferences_notifications">Notifications</string>
     <string name="title_preferences_account">Account</string>
     <string name="title_pref_chat_available">Available in chat</string>
+    <string name="title_pref_other_options">Other options</string>
+    <string name="title_pref_download_user_data">Download user data</string>
+    <string name="message_download_user_data">Download all your user data?</string>
     <string name="title_pref_chat_notifications">Receive chat notifications</string>
     <string name="title_pref_edit_profile">Edit profile</string>
     <string name="title_pref_change_password">Change password</string>

@@ -9,6 +9,17 @@
             android:checked="true"/>
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="pref_key_other_options"
+        android:title="@string/title_pref_other_options">
+
+        <Preference
+            android:key="pref_key_user_data"
+            android:persistent="false"
+            android:title="@string/title_pref_download_user_data" />
+
+    </PreferenceCategory>
+
     <!--<PreferenceCategory-->
         <!--android:key="pref_key_privacy_settings"-->
         <!--android:title="@string/title_preferences_notifications">-->
