@@ -4,8 +4,11 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.SwitchPreferenceCompat;
@@ -16,6 +19,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.itextpdf.text.DocumentException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
 import in.ureport.R;
@@ -113,16 +117,37 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
             @Override
             public void onResponse(Call<UserDataResponse> call, Response<UserDataResponse> response) {
                 progressDialog.dismiss();
+
+                if (response.code() != 200) {
+                    displayMessage(R.string.error_request);
+                    return;
+                }
+
+                progressDialog.show();
                 try {
-                    UserDataDoc.makeUserDataPdf(getContext().getResources(), response.body());
+                    final File pdfFile = UserDataDoc.makeUserDataPdf(getResources(), response.body());
+                    final Uri pdfFileUri = FileProvider.getUriForFile(
+                            getContext(),
+                            "in.ureport.UreportApplication.provider",
+                            pdfFile
+                    );
+                    final Intent intent = new Intent(Intent.ACTION_VIEW)
+                            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            .setDataAndType(pdfFileUri, "application/pdf");
+
+                    progressDialog.dismiss();
+                    startActivity(intent);
                 } catch (FileNotFoundException | DocumentException e) {
                     e.printStackTrace();
+                    progressDialog.dismiss();
+                    displayMessage(R.string.user_data_pdf_error);
                 }
             }
 
             @Override
             public void onFailure(Call<UserDataResponse> call, Throwable throwable) {
                 progressDialog.dismiss();
+                displayMessage(R.string.error_request);
             }
         });
     }
@@ -162,10 +187,6 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
 
     private void displayMessage(int message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    private void makeUserDataPDF(final Context context, final UserDataResponse userData) {
-
     }
 
 }

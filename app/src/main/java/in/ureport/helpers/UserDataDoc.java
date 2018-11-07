@@ -10,6 +10,7 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
@@ -23,12 +24,14 @@ import in.ureport.models.userdata.UserDataResponse;
 
 public class UserDataDoc {
 
-    public static void makeUserDataPdf(final Resources res, final UserDataResponse userData)
+    private static final String rootPath = Environment.getExternalStorageDirectory().getPath();
+
+    public static File makeUserDataPdf(final Resources res, final UserDataResponse userData)
             throws FileNotFoundException, DocumentException {
         final User user = userData.getUser();
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
         final Document document = new Document();
-        final String filePath = Environment.getExternalStorageDirectory().getPath() + "/ureport/user-data.pdf";
+        final String filePath =  rootPath + "/ureport-user-data.pdf";
 
         PdfWriter.getInstance(document, new FileOutputStream(filePath));
         document.open();
@@ -97,9 +100,11 @@ public class UserDataDoc {
         document.add(new Paragraph(makeContributionsText(res, userData.getContributions().getPollContributions(), R.string.user_data_poll_title)));
 
         document.close();
+
+        return new File(filePath);
     }
 
-    private static String makeStoriesText(final Resources res, final List<Story> stories) {
+    public static String makeStoriesText(final Resources res, final List<Story> stories) {
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd, HH:mm", Locale.getDefault());
         final StringBuilder storiesBuilder = new StringBuilder();
         for (Story story : stories) {
@@ -117,7 +122,7 @@ public class UserDataDoc {
         return storiesBuilder.toString();
     }
 
-    private static String makeContributionsText(final Resources res,
+    public static String makeContributionsText(final Resources res,
                                                 final List<UserDataResponse.Contribution> contributions,
                                                 @StringRes final int titleId) {
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd, HH:mm", Locale.getDefault());

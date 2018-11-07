@@ -266,6 +266,7 @@
     <string name="story_share_info">Download U-Report app: http://goo.gl/Xxyodt</string>
     <string name="label_country_moderator">Country Moderators</string>
     <string name="message_success_user_update">User was updated with success!</string>
+    <string name="error_request">An error occurred during request</string>
 
     <string-array name="spinner_loading">
         <item>Loading...</item>
@@ -402,5 +403,6 @@
     <string name="user_data_contribution">Contribution: %s</string>
     <string name="user_data_story_contributions">Story contributions</string>
     <string name="user_data_poll_contributions">Poll contributions</string>
+    <string name="user_data_pdf_error">An error occurred during PDF generation process</string>
 
 </resources>
