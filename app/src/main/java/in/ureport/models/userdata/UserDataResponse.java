@@ -1,5 +1,7 @@
 package in.ureport.models.userdata;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 import java.util.List;
 
@@ -10,8 +12,8 @@ public class UserDataResponse {
 
     private User user;
     private List<Chat> chats;
-    private StoriesResponse stories;
-    private ContributionsResponse contributions;
+    private Stories stories;
+    private Contributions contributions;
 
     public User getUser() {
         return user;
@@ -21,17 +23,42 @@ public class UserDataResponse {
         this.user = user;
     }
 
-    class Chat {
+    public List<Chat> getChats() {
+        return chats;
+    }
 
-        private String chatRoomKey;
+    public void setChats(List<Chat> chats) {
+        this.chats = chats;
+    }
+
+    public Stories getStories() {
+        return stories;
+    }
+
+    public void setStories(Stories stories) {
+        this.stories = stories;
+    }
+
+    public Contributions getContributions() {
+        return contributions;
+    }
+
+    public void setContributions(Contributions contributions) {
+        this.contributions = contributions;
+    }
+
+    public class Chat {
+
+        @SerializedName("chatRoomKey")
+        private String key;
         private List<String> messages;
 
-        public String getChatRoomKey() {
-            return chatRoomKey;
+        public String getKey() {
+            return key;
         }
 
-        public void setChatRoomKey(String chatRoomKey) {
-            this.chatRoomKey = chatRoomKey;
+        public void setKey(String key) {
+            this.key = key;
         }
 
         public List<String> getMessages() {
@@ -44,7 +71,7 @@ public class UserDataResponse {
 
     }
 
-    class StoriesResponse {
+    public class Stories {
 
         private List<Story> publishedStories;
         private List<Story> likedStories;
@@ -85,33 +112,43 @@ public class UserDataResponse {
 
     }
 
-    class ContributionsResponse {
+    public class Contributions {
 
-        private List<StoryContributionResponse> storyContributions;
-        private List<PollContributionResponse> pollContributions;
+        private List<Contribution> storyContributions;
+        private List<Contribution> pollContributions;
 
-        public List<StoryContributionResponse> getStoryContributions() {
+        public List<Contribution> getStoryContributions() {
             return storyContributions;
         }
 
-        public void setStoryContributions(List<StoryContributionResponse> storyContributions) {
+        public void setStoryContributions(List<Contribution> storyContributions) {
             this.storyContributions = storyContributions;
         }
 
-        public List<PollContributionResponse> getPollContributions() {
+        public List<Contribution> getPollContributions() {
             return pollContributions;
         }
 
-        public void setPollContributions(List<PollContributionResponse> pollContributions) {
+        public void setPollContributions(List<Contribution> pollContributions) {
             this.pollContributions = pollContributions;
         }
 
     }
 
-    class ContributionResponse {
+    public class Contribution {
 
+        @SerializedName(value = "storyTitle", alternate = {"pollTitle"})
+        private String title;
         private String contribution;
         private Date createdDate;
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
 
         public String getContribution() {
             return contribution;
@@ -127,34 +164,6 @@ public class UserDataResponse {
 
         public void setCreatedDate(Date createdDate) {
             this.createdDate = createdDate;
-        }
-
-    }
-
-    class StoryContributionResponse extends ContributionResponse {
-
-        private String storyTitle;
-
-        public String getStoryTitle() {
-            return storyTitle;
-        }
-
-        public void setStoryTitle(String storyTitle) {
-            this.storyTitle = storyTitle;
-        }
-
-    }
-
-    class PollContributionResponse extends ContributionResponse {
-
-        private String pollTitle;
-
-        public String getPollTitle() {
-            return pollTitle;
-        }
-
-        public void setPollTitle(String pollTitle) {
-            this.pollTitle = pollTitle;
         }
 
     }

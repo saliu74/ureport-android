@@ -1,8 +1,11 @@
 package in.ureport.fragments;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.SwitchPreferenceCompat;
@@ -11,19 +14,22 @@ import android.widget.Toast;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.itextpdf.text.DocumentException;
+
+import java.io.FileNotFoundException;
 
 import in.ureport.R;
+import in.ureport.helpers.PermissionHelper;
+import in.ureport.helpers.UserDataDoc;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.models.userdata.UserDataResponse;
-import in.ureport.network.UserDataApi;
+import in.ureport.network.UserDataServices;
 import in.ureport.network.UserServices;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by johncordeiro on 18/09/15.
@@ -34,7 +40,10 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
     private static final String USER_DATA_PREFERENCE = "pref_key_user_data";
     private static final String CHAT_NOTIFICATIONS_KEY = "pref_key_chat_notifications";
 
+    private static final int REQUEST_CODE_WRITE_PDF = 100;
+
     private UserServices userServices;
+    private UserDataServices userDataServices;
 
     private SwitchPreferenceCompat publicProfilePreference;
     private Preference userDataPreference;
@@ -50,6 +59,14 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
         loadUser();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE_WRITE_PDF && PermissionHelper.allPermissionsGranted(grantResults)) {
+            downloadUserData();
+        }
+    }
+
     private void setupView() {
         publicProfilePreference = (SwitchPreferenceCompat)getPreferenceManager().findPreference(PUBLIC_PROFILE_KEY);
         publicProfilePreference.setOnPreferenceChangeListener(onPublicProfilePreferenceChangeListener);
@@ -59,6 +76,7 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
 
     private void setupObjects() {
         userServices = new UserServices();
+        userDataServices = new UserDataServices(getContext());
     }
 
     private void loadUser() {
@@ -76,15 +94,14 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
         publicProfilePreference.setChecked(user.getPublicProfile());
     }
 
-    private UserDataApi getUserDataService() {
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://us-central1-u-report-dev.cloudfunctions.net")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        return retrofit.create(UserDataApi.class);
-    }
-
     private void downloadUserData() {
+        if (!PermissionHelper.isPermissionGranted(
+                getContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_WRITE_PDF);
+            return;
+        }
+
         final ProgressDialog progressDialog = ProgressDialog.show(
                 getContext(),
                 null,
@@ -92,20 +109,20 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
                 true,
                 false
         );
-        final UserDataApi userDataService = getUserDataService();
-        final Call<UserDataResponse> userData = userDataService.getUserData(UserManager.getUserId());
-
-        userData.enqueue(new Callback<UserDataResponse>() {
+        userDataServices.getUserData(UserManager.getUserId()).enqueue(new Callback<UserDataResponse>() {
             @Override
             public void onResponse(Call<UserDataResponse> call, Response<UserDataResponse> response) {
                 progressDialog.dismiss();
-                Toast.makeText(getContext(), "User data downloaded", Toast.LENGTH_SHORT).show();
+                try {
+                    UserDataDoc.makeUserDataPdf(getContext().getResources(), response.body());
+                } catch (FileNotFoundException | DocumentException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void onFailure(Call<UserDataResponse> call, Throwable throwable) {
                 progressDialog.dismiss();
-                Toast.makeText(getContext(), "User data downloaded", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -146,4 +163,9 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
     private void displayMessage(int message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
+
+    private void makeUserDataPDF(final Context context, final UserDataResponse userData) {
+
+    }
+
 }

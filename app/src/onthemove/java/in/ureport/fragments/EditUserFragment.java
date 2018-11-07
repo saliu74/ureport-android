@@ -98,7 +98,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
         }
 
         private void updateContactToRapidpro() {
-            SaveContactTask saveContactTask = new SaveContactTask(getActivity(), getCountrySelected(), false) {
+            SaveContactTask saveContactTask = new SaveContactTask(getActivity(), user, false) {
                 @Override
                 protected void onPostExecute(ContactBase contact) {
                     super.onPostExecute(contact);
@@ -109,7 +109,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
                     }
                 }
             };
-            saveContactTask.execute(user);
+            saveContactTask.execute();
         }
     };
 
