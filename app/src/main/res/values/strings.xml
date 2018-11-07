@@ -386,7 +386,7 @@
     <string name="user_data_state">State: %s</string>
     <string name="user_data_district">District: %s</string>
     <string name="user_data_chats">Chats</string>
-    <string name="user_data_chat_room">Chat room key: %s, Messages:</string>
+    <string name="user_data_chat_room">Chat type: %s, Messages:</string>
     <string name="user_data_stories">Stories</string>
     <string name="user_data_story_title">Story title: %s</string>
     <string name="user_data_poll_title">Poll title: %s</string>

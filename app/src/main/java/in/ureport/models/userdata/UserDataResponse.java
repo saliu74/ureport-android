@@ -48,17 +48,16 @@ public class UserDataResponse {
     }
 
     public class Chat {
-
-        @SerializedName("chatRoomKey")
-        private String key;
+        @SerializedName("chatType")
+        private String type;
         private List<String> messages;
 
-        public String getKey() {
-            return key;
+        public String getType() {
+            return type;
         }
 
-        public void setKey(String key) {
-            this.key = key;
+        public void setType(String type) {
+            this.type = type;
         }
 
         public List<String> getMessages() {

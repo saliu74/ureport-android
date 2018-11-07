@@ -63,7 +63,7 @@ public class UserDataDoc {
                 chatMessagesBuilder.append(message).append("\n");
             }
             document.add(new Paragraph("\n"));
-            document.add(new Paragraph(res.getString(R.string.user_data_chat_room, chat.getKey())));
+            document.add(new Paragraph(res.getString(R.string.user_data_chat_room, chat.getType()).toUpperCase()));
             document.add(new Paragraph("\n"));
             document.add(new Paragraph(chatMessagesBuilder.toString()));
         }
